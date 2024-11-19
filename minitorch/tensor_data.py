@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 import random
 from typing import Iterable, Optional, Sequence, Tuple, Union
 
@@ -46,9 +47,10 @@ def index_to_position(index: Index, strides: Strides) -> int:
         Position in storage
 
     """
-    if len(index) != len(strides):
-        raise IndexingError(f"Index {index} must be size of {strides}.")
-    return sum(i * s for i, s in zip(index, strides))
+    pos = 0
+    for ind, stride in zip(index, strides):
+        pos += ind * stride
+    return pos
 
 
 def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
@@ -64,9 +66,11 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
         out_index : return index corresponding to position.
 
     """
+    cur_ord = ordinal + 0
     for i in range(len(shape) - 1, -1, -1):
-        out_index[i] = ordinal % shape[i]
-        ordinal //= shape[i]
+        sh = shape[i]
+        out_index[i] = int(cur_ord % sh)
+        cur_ord = cur_ord // sh
 
 
 def broadcast_index(
@@ -90,13 +94,12 @@ def broadcast_index(
         None
 
     """
-    offset = len(big_shape) - len(shape)
-
-    for i in range(len(shape)):
-        if shape[i] == 1:
-            out_index[i] = 0  # Broadcasting
+    for i,s in enumerate(shape):
+        if s > 1:
+            out_index[i] = big_index[i + len(big_shape) - len(shape)]
         else:
-            out_index[i] = big_index[i + offset]
+            out_index[i] = 0
+    return None
 
 
 def shape_broadcast(shape1: tuple, shape2: tuple) -> tuple:
