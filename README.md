@@ -335,3 +335,27 @@ Size: 1024x1024, CUDA Time: 9.240870s, Numba Time: 12.647923s
 Size: 2048x2048, CUDA Time: 37.108216s, Numba Time: 87.769194s
 
 # 3.5
+
+## GPU - Split Dataset - 100 Hidden Layer 0.05 Learning Rate
+Epoch  0  loss  6.942339457452306 correct 30
+Epoch  10  loss  5.2548321491150105 correct 43
+Epoch  20  loss  3.992102823873469 correct 48
+Epoch  30  loss  4.774846996627357 correct 38
+Epoch  40  loss  3.795849824655773 correct 48
+Epoch  50  loss  2.5987661352018296 correct 48
+Epoch  60  loss  2.362824666761843 correct 48
+Epoch  70  loss  2.463578500692634 correct 48
+Epoch  80  loss  2.814614366968841 correct 48
+Epoch  90  loss  0.8319729772491883 correct 50
+
+## CPU - Split Dataset - 100 Hidden Layer 0.05 Learning Rate
+
+
+## GPU - Simple Dataset - 100 Hidden Layer 0.05 Learning Rate
+
+
+## CPU - Simple Dataset - 100 Hidden Layer 0.05 Learning Rate
+
+## GPU - Xor Dataset - 100 Hidden Layer 0.05 Learning Rate
+
+## CPU - Xor Dataset - 100 Hidden Layer 0.05 Learning Rate

@@ -1,5 +1,5 @@
 import random
-
+import time 
 import numba
 
 import minitorch
@@ -66,7 +66,13 @@ class FastTrain:
         BATCH = 10
         losses = []
 
+        # Early stopping variables
+        correct_counts = 0  # Tracks consecutive epochs with all correct predictions
+        all_epoch_times = []  # Stores times for all epochs
+
         for epoch in range(max_epochs):
+            start_time = time.time()  # Start timer for the epoch
+
             total_loss = 0.0
             c = list(zip(data.X, data.y))
             random.shuffle(c)
@@ -76,8 +82,8 @@ class FastTrain:
                 optim.zero_grad()
                 X = minitorch.tensor(X_shuf[i : i + BATCH], backend=self.backend)
                 y = minitorch.tensor(y_shuf[i : i + BATCH], backend=self.backend)
-                # Forward
 
+                # Forward pass
                 out = self.model.forward(X).view(y.shape[0])
                 prob = (out * y) + (out - 1.0) * (y - 1.0)
                 loss = -prob.log()
@@ -85,18 +91,40 @@ class FastTrain:
 
                 total_loss = loss.sum().view(1)[0]
 
-                # Update
+                # Update weights
                 optim.step()
 
             losses.append(total_loss)
-            # Logging
-            if epoch % 10 == 0 or epoch == max_epochs:
-                X = minitorch.tensor(data.X, backend=self.backend)
-                y = minitorch.tensor(data.y, backend=self.backend)
-                out = self.model.forward(X).view(y.shape[0])
-                y2 = minitorch.tensor(data.y)
-                correct = int(((out.detach() > 0.5) == y2).sum()[0])
-                log_fn(epoch, total_loss, correct, losses)
+
+            # Logging and metrics calculation
+            X = minitorch.tensor(data.X, backend=self.backend)
+            y = minitorch.tensor(data.y, backend=self.backend)
+            out = self.model.forward(X).view(y.shape[0])
+            y2 = minitorch.tensor(data.y)
+            correct = int(((out.detach() > 0.5) == y2).sum()[0])
+
+            epoch_time = time.time() - start_time  # Calculate epoch time
+            all_epoch_times.append(epoch_time)  # Store epoch time
+
+            log_fn(epoch, total_loss, correct, losses)
+
+            # Print average epoch time every 10 epochs
+            if (epoch + 1) % 10 == 0:
+                avg_time = sum(all_epoch_times[-10:]) / len(all_epoch_times[-10:])
+                print(f"Average epoch time (last 10 epochs): {avg_time:.3f}s")
+
+            # Early stopping logic
+            if correct == len(data.y):
+                correct_counts += 1
+                if correct_counts >= 2:
+                    print(f"Early stopping triggered at epoch {epoch} (all predictions correct twice).")
+                    break
+            else:
+                correct_counts = 0  # Reset if not all predictions are correct
+
+        # Print total average epoch time
+        total_avg_time = sum(all_epoch_times) / len(all_epoch_times)
+        print(f"Total average epoch time: {total_avg_time:.3f}s")
 
 
 if __name__ == "__main__":
