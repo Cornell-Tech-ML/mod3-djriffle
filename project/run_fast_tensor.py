@@ -116,8 +116,7 @@ class FastTrain:
                 avg_time = sum(epoch_group_times) / len(epoch_group_times)
                 print(f"Epochs {epoch - 9}-{epoch}: Average time per epoch: {avg_time:.3f}s")
                 epoch_group_times = []  # Reset group times
-
-            log_fn(epoch, total_loss, correct, losses)
+                log_fn(epoch, total_loss, correct, losses)
 
             # Early stopping logic
             if correct == len(data.y):
