@@ -337,25 +337,181 @@ Size: 2048x2048, CUDA Time: 37.108216s, Numba Time: 87.769194s
 # 3.5
 
 ## GPU - Split Dataset - 100 Hidden Layer 0.05 Learning Rate
-Epoch  0  loss  6.942339457452306 correct 30
-Epoch  10  loss  5.2548321491150105 correct 43
-Epoch  20  loss  3.992102823873469 correct 48
-Epoch  30  loss  4.774846996627357 correct 38
-Epoch  40  loss  3.795849824655773 correct 48
-Epoch  50  loss  2.5987661352018296 correct 48
-Epoch  60  loss  2.362824666761843 correct 48
-Epoch  70  loss  2.463578500692634 correct 48
-Epoch  80  loss  2.814614366968841 correct 48
-Epoch  90  loss  0.8319729772491883 correct 50
+Epochs 0-9: Average time per epoch: 2.204s
+Epoch  9  loss  4.346814027482488 correct 45
+Epochs 10-19: Average time per epoch: 1.971s
+Epoch  19  loss  2.157903632709191 correct 44
+Epochs 20-29: Average time per epoch: 1.964s
+Epoch  29  loss  2.8637940645805537 correct 44
+Epochs 30-39: Average time per epoch: 1.970s
+Epoch  39  loss  2.311212699289988 correct 45
+Epochs 40-49: Average time per epoch: 1.959s
+Epoch  49  loss  1.6140746723625266 correct 46
+Epochs 50-59: Average time per epoch: 1.960s
+Epoch  59  loss  1.4528505750483829 correct 48
+Epochs 60-69: Average time per epoch: 1.959s
+Epoch  69  loss  1.5174633545834295 correct 49
+Epochs 70-79: Average time per epoch: 1.958s
+Epoch  79  loss  1.4571803126219554 correct 49
+Epochs 80-89: Average time per epoch: 1.954s
+Epoch  89  loss  1.0148927688167007 correct 49
+Epochs 90-99: Average time per epoch: 1.971s
+Epoch  99  loss  0.8825420110021014 correct 49
+Epochs 100-109: Average time per epoch: 1.967s
+Epoch  109  loss  1.3937318068656754 correct 49
+Epoch  111  loss  3.1962381561136937 correct 50
+Epochs 110-119: Average time per epoch: 1.967s
+Epoch  119  loss  1.1106989833434944 correct 49
+Epochs 120-129: Average time per epoch: 1.968s
+Epoch  129  loss  0.44998530822370286 correct 49
+Epoch  132  loss  1.2194713084386628 correct 50
+Epoch  133  loss  3.1856292163517157 correct 50
+Early stopping triggered at epoch 133 (all predictions correct twice).
+Total average epoch time: 1.982s
 
 ## CPU - Split Dataset - 100 Hidden Layer 0.05 Learning Rate
-
+Epochs 0-9: Average time per epoch: 2.054s
+Epoch  9  loss  2.837253894409059 correct 40
+Epochs 10-19: Average time per epoch: 0.132s
+Epoch  19  loss  4.011155571481086 correct 46
+Epochs 20-29: Average time per epoch: 0.134s
+Epoch  29  loss  3.105287197866471 correct 47
+Epochs 30-39: Average time per epoch: 0.131s
+Epoch  39  loss  2.6195957371571423 correct 49
+Epochs 40-49: Average time per epoch: 0.131s
+Epoch  49  loss  3.238118578160422 correct 48
+Epoch  56  loss  2.924282458485897 correct 50
+Epochs 50-59: Average time per epoch: 0.131s
+Epoch  59  loss  2.093629508436419 correct 50
+Epoch  60  loss  2.2801129603813703 correct 50
+Early stopping triggered at epoch 60 (all predictions correct twice).
+Total average epoch time: 0.447s
 
 ## GPU - Simple Dataset - 100 Hidden Layer 0.05 Learning Rate
-
+Epochs 0-9: Average time per epoch: 2.319s
+Epoch  9  loss  1.6911248137726287 correct 48
+Epoch  17  loss  0.9900248050407188 correct 50
+Epoch  18  loss  2.2156966602335975 correct 50
+Early stopping triggered at epoch 18 (all predictions correct twice).
+Total average epoch time: 2.154s
 
 ## CPU - Simple Dataset - 100 Hidden Layer 0.05 Learning Rate
+sum in tensor_functions.py
+Epochs 0-9: Average time per epoch: 2.062s
+Epoch  9  loss  2.609836980119164 correct 45
+Epochs 10-19: Average time per epoch: 0.134s
+Epoch  19  loss  1.656837894963247 correct 47
+Epoch  26  loss  1.7757434121994176 correct 50
+Epoch  27  loss  0.44285938044121503 correct 50
+Early stopping triggered at epoch 27 (all predictions correct twice).
+Total average epoch time: 0.822s
 
 ## GPU - Xor Dataset - 100 Hidden Layer 0.05 Learning Rate
+Epochs 0-9: Average time per epoch: 2.242s
+Epoch  9  loss  4.578101611377214 correct 37
+Epochs 10-19: Average time per epoch: 2.023s
+Epoch  19  loss  2.7805222924474364 correct 42
+Epochs 20-29: Average time per epoch: 2.004s
+Epoch  29  loss  3.7858912699253526 correct 46
+Epochs 30-39: Average time per epoch: 2.032s
+Epoch  39  loss  3.507771857784999 correct 47
+Epochs 40-49: Average time per epoch: 2.025s
+Epoch  49  loss  2.7764384046240203 correct 48
+Epochs 50-59: Average time per epoch: 2.019s
+Epoch  59  loss  2.8021203698550865 correct 48
+Epochs 60-69: Average time per epoch: 2.025s
+Epoch  69  loss  2.6926207218648077 correct 48
+Epochs 70-79: Average time per epoch: 2.021s
+Epoch  79  loss  2.4120885102857246 correct 48
+Epochs 80-89: Average time per epoch: 2.011s
+Epoch  89  loss  1.0299459950484677 correct 49
+Epochs 90-99: Average time per epoch: 2.021s
+Epoch  99  loss  0.9958882240532196 correct 48
+Epochs 100-109: Average time per epoch: 2.013s
+Epoch  109  loss  1.8871205102005018 correct 49
+Epochs 110-119: Average time per epoch: 2.009s
+Epoch  119  loss  0.5490348652496475 correct 49
+Epochs 120-129: Average time per epoch: 2.021s
+Epoch  129  loss  0.5610375179847171 correct 49
+Epochs 130-139: Average time per epoch: 2.013s
+Epoch  139  loss  2.018891541420463 correct 50
+Epoch  139  loss  2.018891541420463 correct 50
+Epoch  142  loss  1.5628729941633974 correct 50
+Epochs 140-149: Average time per epoch: 2.019s
+Epoch  149  loss  1.0384484637745564 correct 48
+Epoch  152  loss  1.4547089291418602 correct 50
+Epoch  153  loss  2.195140170574619 correct 50
+Epoch  153  loss  2.195140170574619 correct 50
+Early stopping triggered at epoch 153 (all predictions correct twice).
+Total average epoch time: 2.033s
 
 ## CPU - Xor Dataset - 100 Hidden Layer 0.05 Learning Rate
+Epochs 0-9: Average time per epoch: 2.080s
+Epoch  9  loss  5.517275021598561 correct 34
+Epochs 10-19: Average time per epoch: 0.133s
+Epoch  19  loss  5.379023762361035 correct 43
+Epochs 20-29: Average time per epoch: 0.133s
+Epoch  29  loss  6.442586800944841 correct 43
+Epochs 30-39: Average time per epoch: 0.131s
+Epoch  39  loss  3.7016348566336235 correct 43
+Epochs 40-49: Average time per epoch: 0.133s
+Epoch  49  loss  3.75750077413315 correct 43
+Epochs 50-59: Average time per epoch: 0.133s
+Epoch  59  loss  3.480886829373109 correct 44
+Epochs 60-69: Average time per epoch: 0.132s
+Epoch  69  loss  3.075690959319292 correct 45
+Epochs 70-79: Average time per epoch: 0.136s
+Epoch  79  loss  3.153016966152794 correct 44
+Epochs 80-89: Average time per epoch: 0.132s
+Epoch  89  loss  4.270194038316391 correct 44
+Epochs 90-99: Average time per epoch: 0.131s
+Epoch  99  loss  4.589162413558114 correct 46
+Epochs 100-109: Average time per epoch: 0.131s
+Epoch  109  loss  2.1739299956783253 correct 48
+Epochs 110-119: Average time per epoch: 0.131s
+Epoch  119  loss  2.1016534720040516 correct 45
+Epochs 120-129: Average time per epoch: 0.131s
+Epoch  129  loss  2.2175543268241467 correct 46
+Epochs 130-139: Average time per epoch: 0.132s
+Epoch  139  loss  1.6557675885537817 correct 47
+Epochs 140-149: Average time per epoch: 0.132s
+Epoch  149  loss  3.865399600543608 correct 48
+Epochs 150-159: Average time per epoch: 0.133s
+Epoch  159  loss  3.8784428295603384 correct 47
+Epochs 160-169: Average time per epoch: 0.133s
+Epoch  169  loss  2.685019863372572 correct 48
+Epochs 170-179: Average time per epoch: 0.133s
+Epoch  179  loss  1.4500403243594382 correct 48
+Epochs 180-189: Average time per epoch: 0.133s
+Epoch  189  loss  1.268838269687721 correct 49
+Epochs 190-199: Average time per epoch: 0.133s
+Epoch  199  loss  0.6633905676977141 correct 49
+Epochs 200-209: Average time per epoch: 0.131s
+Epoch  209  loss  1.6632230823342007 correct 49
+Epochs 210-219: Average time per epoch: 0.132s
+Epoch  219  loss  1.3102978209223803 correct 49
+Epochs 220-229: Average time per epoch: 0.132s
+Epoch  229  loss  0.8012066718599246 correct 49
+Epoch  236  loss  2.6446770830991766 correct 50
+Epochs 230-239: Average time per epoch: 0.131s
+Epoch  239  loss  2.7182279206932543 correct 49
+Epoch  244  loss  2.1350693279901534 correct 50
+Epochs 240-249: Average time per epoch: 0.132s
+Epoch  249  loss  2.009307011113557 correct 47
+Epoch  250  loss  0.8306906543945386 correct 50
+Epochs 250-259: Average time per epoch: 0.134s
+Epoch  259  loss  1.71187530074889 correct 49
+Epoch  263  loss  1.1499061343646668 correct 50
+Epoch  268  loss  1.442599895344542 correct 50
+Epochs 260-269: Average time per epoch: 0.134s
+Epoch  269  loss  0.9391960187764206 correct 49
+Epoch  273  loss  1.2575118448391702 correct 50
+Epoch  275  loss  1.799739377140986 correct 50
+Epoch  277  loss  0.4522503823418099 correct 50
+Epochs 270-279: Average time per epoch: 0.131s
+Epoch  279  loss  0.5531855287666504 correct 49
+Epoch  280  loss  0.6556600264806333 correct 50
+Epoch  281  loss  1.360674251524049 correct 50
+Epoch  281  loss  1.360674251524049 correct 50
+Early stopping triggered at epoch 281 (all predictions correct twice).
+Total average epoch time: 0.201s
