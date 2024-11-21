@@ -200,13 +200,9 @@ class Sum(Function):
     @staticmethod
     def forward(ctx: Context, t1: Tensor, dim: Optional[Tensor] = None) -> Tensor:
         """Sum the tensor along the specified dimension."""
-        print("sum forward in tensor_functions.py")
-        print(t1)
         if dim is None:
-            print("dim is None in sum forward")
             dim_val = -1
         else:
-            print(f"dim is {dim} in sum forward")
             dim_val = int(dim.item())
         return t1.f.add_reduce(t1, dim_val)
 
