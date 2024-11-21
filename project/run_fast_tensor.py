@@ -1,5 +1,5 @@
 import random
-import time 
+import time
 import numba
 
 import minitorch

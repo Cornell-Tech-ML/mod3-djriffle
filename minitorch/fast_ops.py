@@ -6,7 +6,6 @@ from numba import prange
 import numpy as np  # come back to this
 
 from .tensor_data import (
-    Index,
     MAX_DIMS,
     broadcast_index,
     index_to_position,
@@ -141,7 +140,7 @@ class FastOps(TensorOps):
 
 
 def tensor_map(
-    fn: Callable[[float], float]
+    fn: Callable[[float], float],
 ) -> Callable[[Storage, Shape, Strides, Storage, Shape, Strides], None]:
     """NUMBA low_level tensor_map function. See tensor_ops.py for description.
 
@@ -170,7 +169,9 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         # Check if strides and shapes are aligned
-        if np.array_equal(out_strides, in_strides) and np.array_equal(out_shape, in_shape):
+        if np.array_equal(out_strides, in_strides) and np.array_equal(
+            out_shape, in_shape
+        ):
             # If aligned, apply the function directly in parallel
             for i in prange(len(out)):
                 out[i] = fn(in_storage[i])
@@ -193,7 +194,7 @@ def tensor_map(
 
 
 def tensor_zip(
-    fn: Callable[[float, float], float]
+    fn: Callable[[float, float], float],
 ) -> Callable[
     [Storage, Shape, Strides, Storage, Shape, Strides, Storage, Shape, Strides], None
 ]:
@@ -345,10 +346,10 @@ def _tensor_matrix_multiply(
 
                 # Store the result in the output tensor
                 out_index = (
-                    batch * out_strides[0]
-                    + row * out_strides[1]
-                    + col * out_strides[2]
+                    batch * out_strides[0] + row * out_strides[1] + col * out_strides[2]
                 )
                 out[out_index] = dot_product
+
+
 tensor_matrix_multiply = njit(_tensor_matrix_multiply, parallel=True)
 assert tensor_matrix_multiply is not None
