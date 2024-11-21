@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import enum
 import random
 from typing import Iterable, Optional, Sequence, Tuple, Union
 
@@ -94,7 +93,7 @@ def broadcast_index(
         None
 
     """
-    for i,s in enumerate(shape):
+    for i, s in enumerate(shape):
         if s > 1:
             out_index[i] = big_index[i + len(big_shape) - len(shape)]
         else:

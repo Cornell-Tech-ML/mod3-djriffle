@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from typing import Callable, Optional
 
     from .tensor import Tensor
-    from .tensor_data import Index, Shape, Storage, Strides
+    from .tensor_data import Shape, Storage, Strides
 
 # TIP: Use `NUMBA_DISABLE_JIT=1 pytest tests/ -m task3_1` to run these tests without JIT.
 
@@ -60,7 +60,7 @@ class FastOps(TensorOps):
         f = tensor_zip(njit(fn))
 
         def ret(a: Tensor, b: Tensor) -> Tensor:
-            c_shape = shape_broadcast(a.shape, b.shape) # type: ignore
+            c_shape = shape_broadcast(a.shape, b.shape)  # type: ignore
             out = a.zeros(c_shape)
             f(*out.tuple(), *a.tuple(), *b.tuple())
             return out
@@ -123,7 +123,7 @@ class FastOps(TensorOps):
             both_2d += 1
         both_2d = both_2d == 2
 
-        ls = list(shape_broadcast(a.shape[:-2], b.shape[:-2])) # type: ignore
+        ls = list(shape_broadcast(a.shape[:-2], b.shape[:-2]))  # type: ignore
         ls.append(a.shape[-2])
         ls.append(b.shape[-1])
         assert a.shape[-1] == b.shape[-2]
@@ -169,7 +169,9 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        if np.array_equal(out_strides, in_strides) and np.array_equal(out_shape, in_shape):
+        if np.array_equal(out_strides, in_strides) and np.array_equal(
+            out_shape, in_shape
+        ):
             for i in prange(len(out)):
                 out[i] = fn(in_storage[i])
         else:
@@ -178,10 +180,10 @@ def tensor_map(
             for i in prange(len(out)):
                 to_index(i, out_shape, out_index)
                 broadcast_index(out_index, out_shape, in_shape, in_index)
-                
+
                 o = index_to_position(out_index, out_strides)
                 a = index_to_position(in_index, in_strides)
-                
+
                 out[o] = fn(in_storage[a])
 
     return njit(_map, parallel=True)  # type: ignore
@@ -227,7 +229,7 @@ def tensor_zip(
             and np.array_equal(out_shape, a_shape)
             and np.array_equal(out_shape, b_shape)
         )
-        if (strides_aligned):
+        if strides_aligned:
             for i in prange(len(out)):
                 out[i] = fn(a_storage[i], b_storage[i])
         else:
@@ -235,8 +237,6 @@ def tensor_zip(
             a_idx = np.empty(MAX_DIMS, dtype=np.int32)
             b_idx = np.empty(MAX_DIMS, dtype=np.int32)
             for i in prange(len(out)):
-
-
                 to_index(i, out_shape, out_idx)
                 broadcast_index(out_idx, out_shape, a_shape, a_idx)
                 broadcast_index(out_idx, out_shape, b_shape, b_idx)
@@ -292,7 +292,7 @@ def tensor_reduce(
             base_a_position = a - (a_index[reduce_dim] * a_strides[reduce_dim])
             for j in range(1, a_shape[reduce_dim]):
                 a_position = base_a_position + j * a_strides[reduce_dim]
-                out[o] = fn(out[o], a_storage[a_position]) # type: ignore
+                out[o] = fn(out[o], a_storage[a_position])  # type: ignore
 
     return njit(_reduce, parallel=True)  # type: ignore
 
@@ -312,19 +312,20 @@ def _tensor_matrix_multiply(
     a_batch_stride = a_strides[0] if a_shape[0] > 1 else 0
     b_batch_stride = b_strides[0] if b_shape[0] > 1 else 0
 
-    for n in prange(out_shape[0]): 
+    for n in prange(out_shape[0]):
         a_offset = n * a_batch_stride
         b_offset = n * b_batch_stride
 
         for i in range(a_shape[1]):
             for j in range(b_shape[2]):
                 sum = 0.0
-                for k in range(a_shape[2]):  
+                for k in range(a_shape[2]):
                     a_idx = a_offset + i * a_strides[1] + k * a_strides[2]
                     b_idx = b_offset + k * b_strides[1] + j * b_strides[2]
                     sum += a_storage[a_idx] * b_storage[b_idx]
                 out_idx = n * out_strides[0] + i * out_strides[1] + j * out_strides[2]
                 out[out_idx] = sum
+
 
 tensor_matrix_multiply = njit(_tensor_matrix_multiply, parallel=True)
 assert tensor_matrix_multiply is not None

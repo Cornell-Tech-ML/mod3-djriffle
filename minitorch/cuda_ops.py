@@ -29,11 +29,13 @@ FakeCUDAKernel = Any
 Fn = TypeVar("Fn")
 
 
-def device_jit(fn: Fn, **kwargs) -> Fn:
+def device_jit(fn: Fn, **kwargs) -> Fn:  # noqa: ANN003
+    """Decorator to JIT compile functions with `njit` and device"""
     return _jit(device=True, **kwargs)(fn)  # type: ignore
 
 
-def jit(fn, **kwargs) -> FakeCUDAKernel:
+def jit(fn: Fn, **kwargs) -> FakeCUDAKernel:  # noqa: ANN003
+    """Decorator to JIT compile functions with `njit`."""
     return _jit(**kwargs)(fn)  # type: ignore
 
 
@@ -243,9 +245,9 @@ def tensor_zip(
 
 
 def _sum_practice(out: Storage, a: Storage, size: int) -> None:
-    """This is a practice sum kernel to prepare for reduce.
+    """A practice sum kernel to prepare for reduce.
 
-    Given an array of length $n$ and out of size $n // \text{blockDIM}$
+    Given an array of length $n$ and out of size blockDIM,
     it should sum up each blockDim values into an out cell.
 
     $[a_1, a_2, ..., a_{100}]$
@@ -480,44 +482,32 @@ def _tensor_matrix_multiply(
     #    a) Copy into shared memory for a matrix.
     #    b) Copy into shared memory for b matrix
     #    c) Compute the dot produce for position c[i, j]
-    acc = 0.0 
-    for k_start in range(
-        0, a_shape[-1], BLOCK_DIM
-    ):  
-        if (
-            i < out_shape[-2] and (k_start + pj) < a_shape[-1]
-        ):  
-            a_shared[pi, pj] = a_storage[  
-                batch * a_batch_stride  
-                + i * a_strides[-2]  
-                + (k_start + pj) * a_strides[-1]  
+    acc = 0.0
+    for k_start in range(0, a_shape[-1], BLOCK_DIM):
+        if i < out_shape[-2] and (k_start + pj) < a_shape[-1]:
+            a_shared[pi, pj] = a_storage[
+                batch * a_batch_stride
+                + i * a_strides[-2]
+                + (k_start + pj) * a_strides[-1]
             ]
         else:
-            a_shared[pi, pj] = 0.0  
+            a_shared[pi, pj] = 0.0
 
-        if (k_start + pi) < b_shape[-2] and j < out_shape[
-            -1
-        ]:  
-            b_shared[pi, pj] = b_storage[  
-                batch * b_batch_stride  
-                + (k_start + pi) * b_strides[-2]  
-                + j * b_strides[-1]  
+        if (k_start + pi) < b_shape[-2] and j < out_shape[-1]:
+            b_shared[pi, pj] = b_storage[
+                batch * b_batch_stride
+                + (k_start + pi) * b_strides[-2]
+                + j * b_strides[-1]
             ]
         else:
-            b_shared[pi, pj] = 0.0  
-        cuda.syncthreads()  
-        if i < out_shape[-2] and j < out_shape[-1]:  
-            
-            for k in range(
-                min(BLOCK_DIM, a_shape[-1] - k_start)
-            ):  
-                acc += a_shared[pi, k] * b_shared[k, pj]  
-        cuda.syncthreads()  
+            b_shared[pi, pj] = 0.0
+        cuda.syncthreads()
+        if i < out_shape[-2] and j < out_shape[-1]:
+            for k in range(min(BLOCK_DIM, a_shape[-1] - k_start)):
+                acc += a_shared[pi, k] * b_shared[k, pj]
+        cuda.syncthreads()
     if i < out_shape[-2] and j < out_shape[-1]:
-        out[
-            batch * out_strides[0]
-            + i * out_strides[-2]
-            + j * out_strides[-1]
-        ] = acc
-        
+        out[batch * out_strides[0] + i * out_strides[-2] + j * out_strides[-1]] = acc
+
+
 tensor_matrix_multiply = jit(_tensor_matrix_multiply)
