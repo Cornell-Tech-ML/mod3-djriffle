@@ -47,20 +47,7 @@ class Linear(minitorch.Module):
     def forward(self, x):
         return x @ self.weights.value + self.bias.value
 
-
-class FastTrain:
-    def __init__(self, hidden_layers, backend=FastTensorBackend):
-        self.hidden_layers = hidden_layers
-        self.model = Network(hidden_layers, backend)
-        self.backend = backend
-
-    def run_one(self, x):
-        return self.model.forward(minitorch.tensor([x], backend=self.backend))
-
-    def run_many(self, X):
-        return self.model.forward(minitorch.tensor(X, backend=self.backend))
-
-    def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
+def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
         self.model = Network(self.hidden_layers, self.backend)
         optim = minitorch.SGD(self.model.parameters(), learning_rate)
         BATCH = 10
@@ -69,6 +56,7 @@ class FastTrain:
         # Early stopping variables
         correct_counts = 0  # Tracks consecutive epochs with all correct predictions
         all_epoch_times = []  # Stores times for all epochs
+        epoch_group_times = []  # Stores times for each group of 10 epochs
 
         for epoch in range(max_epochs):
             start_time = time.time()  # Start timer for the epoch
@@ -106,12 +94,17 @@ class FastTrain:
             epoch_time = time.time() - start_time  # Calculate epoch time
             all_epoch_times.append(epoch_time)  # Store epoch time
 
-            log_fn(epoch, total_loss, correct, losses)
+            # Track times for groups of 10 epochs
+            if len(epoch_group_times) < 10:
+                epoch_group_times.append(epoch_time)
 
-            # Print average epoch time every 10 epochs
-            if (epoch + 1) % 10 == 0:
-                avg_time = sum(all_epoch_times[-10:]) / len(all_epoch_times[-10:])
-                print(f"Average epoch time (last 10 epochs): {avg_time:.3f}s")
+            # Print every 10 epochs
+            if (epoch + 1) % 10 == 0 or epoch == max_epochs:
+                avg_time = sum(epoch_group_times) / len(epoch_group_times)
+                print(f"Epochs {epoch - 9}-{epoch}: Average time per epoch: {avg_time:.3f}s")
+                epoch_group_times = []  # Reset group times
+
+            log_fn(epoch, total_loss, correct, losses)
 
             # Early stopping logic
             if correct == len(data.y):
