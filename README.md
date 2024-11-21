@@ -252,7 +252,9 @@ executed and reused inside the loop):
     - numpy.empty() is used for the allocation.
 None
 ```
+
 # 3.2 - Matrix Multiply
+
 ```
 MATRIX MULTIPLY
  
@@ -317,3 +319,19 @@ Allocation hoisting:
 No allocation hoisting found
 None
 ```
+
+# 3.4
+
+**Happy Thanksgiving**
+
+![1732218119882](image/README/1732218119882.png)
+
+Results:
+Size: 64x64, CUDA Time: 0.040372s, Numba Time: 0.036536s
+Size: 128x128, CUDA Time: 0.149698s, Numba Time: 0.147405s
+Size: 256x256, CUDA Time: 0.580166s, Numba Time: 0.600350s
+Size: 512x512, CUDA Time: 2.331692s, Numba Time: 2.720708s
+Size: 1024x1024, CUDA Time: 9.240870s, Numba Time: 12.647923s
+Size: 2048x2048, CUDA Time: 37.108216s, Numba Time: 87.769194s
+
+# 3.5

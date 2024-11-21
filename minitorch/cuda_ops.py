@@ -483,7 +483,10 @@ def _tensor_matrix_multiply(
     #    b) Copy into shared memory for b matrix
     #    c) Compute the dot produce for position c[i, j]
     acc = 0.0
+
+    # Loop over all sub-blocks along the shared dimension
     for k_start in range(0, a_shape[-1], BLOCK_DIM):
+        # Load elements of `a` into shared memory
         if i < out_shape[-2] and (k_start + pj) < a_shape[-1]:
             a_shared[pi, pj] = a_storage[
                 batch * a_batch_stride
@@ -491,8 +494,9 @@ def _tensor_matrix_multiply(
                 + (k_start + pj) * a_strides[-1]
             ]
         else:
-            a_shared[pi, pj] = 0.0
+            a_shared[pi, pj] = 0.0  # Handle out-of-bounds
 
+        # Load elements of `b` into shared memory
         if (k_start + pi) < b_shape[-2] and j < out_shape[-1]:
             b_shared[pi, pj] = b_storage[
                 batch * b_batch_stride
@@ -500,14 +504,25 @@ def _tensor_matrix_multiply(
                 + j * b_strides[-1]
             ]
         else:
-            b_shared[pi, pj] = 0.0
+            b_shared[pi, pj] = 0.0  # Handle out-of-bounds
+
+        # Synchronize threads to ensure shared memory is fully loaded
         cuda.syncthreads()
+
+        # Perform partial dot product computation
         if i < out_shape[-2] and j < out_shape[-1]:
-            for k in range(min(BLOCK_DIM, a_shape[-1] - k_start)):
+            # Compute the valid range for k to handle edge cases
+            valid_k = min(BLOCK_DIM, a_shape[-1] - k_start)
+            for k in range(valid_k):
                 acc += a_shared[pi, k] * b_shared[k, pj]
+
+        # Synchronize threads before loading new sub-blocks
         cuda.syncthreads()
+
+    # Write the accumulated result to the output tensor
     if i < out_shape[-2] and j < out_shape[-1]:
-        out[batch * out_strides[0] + i * out_strides[-2] + j * out_strides[-1]] = acc
+        out_idx = batch * out_strides[0] + i * out_strides[-2] + j * out_strides[-1]
+        out[out_idx] = acc
 
 
 tensor_matrix_multiply = jit(_tensor_matrix_multiply)
