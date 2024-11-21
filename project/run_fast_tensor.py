@@ -47,7 +47,20 @@ class Linear(minitorch.Module):
     def forward(self, x):
         return x @ self.weights.value + self.bias.value
 
-def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
+
+class FastTrain:
+    def __init__(self, hidden_layers, backend=FastTensorBackend):
+        self.hidden_layers = hidden_layers
+        self.model = Network(hidden_layers, backend)
+        self.backend = backend
+
+    def run_one(self, x):
+        return self.model.forward(minitorch.tensor([x], backend=self.backend))
+
+    def run_many(self, X):
+        return self.model.forward(minitorch.tensor(X, backend=self.backend))
+
+    def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
         self.model = Network(self.hidden_layers, self.backend)
         optim = minitorch.SGD(self.model.parameters(), learning_rate)
         BATCH = 10
