@@ -121,7 +121,9 @@ class FastTrain:
             # Early stopping logic
             if correct == len(data.y):
                 correct_counts += 1
+                log_fn(epoch, total_loss, correct, losses)
                 if correct_counts >= 2:
+                    log_fn(epoch, total_loss, correct, losses)
                     print(f"Early stopping triggered at epoch {epoch} (all predictions correct twice).")
                     break
             else:
