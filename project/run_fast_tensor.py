@@ -1,5 +1,5 @@
 import random
-
+import time
 import numba
 
 import minitorch
@@ -29,8 +29,10 @@ class Network(minitorch.Module):
         self.layer3 = Linear(hidden, 1, backend)
 
     def forward(self, x):
-        # TODO: Implement for Task 3.5.
-        raise NotImplementedError("Need to implement for Task 3.5")
+        x = self.layer1(x).relu()
+        x = self.layer2(x).relu()
+        x = self.layer3(x).sigmoid()
+        return x
 
 
 class Linear(minitorch.Module):
@@ -43,8 +45,7 @@ class Linear(minitorch.Module):
         self.out_size = out_size
 
     def forward(self, x):
-        # TODO: Implement for Task 3.5.
-        raise NotImplementedError("Need to implement for Task 3.5")
+        return x @ self.weights.value + self.bias.value
 
 
 class FastTrain:
@@ -65,7 +66,14 @@ class FastTrain:
         BATCH = 10
         losses = []
 
+        # Early stopping variables
+        correct_counts = 0  # Tracks consecutive epochs with all correct predictions
+        all_epoch_times = []  # Stores times for all epochs
+        epoch_group_times = []  # Stores times for each group of 10 epochs
+
         for epoch in range(max_epochs):
+            start_time = time.time()  # Start timer for the epoch
+
             total_loss = 0.0
             c = list(zip(data.X, data.y))
             random.shuffle(c)
@@ -75,8 +83,8 @@ class FastTrain:
                 optim.zero_grad()
                 X = minitorch.tensor(X_shuf[i : i + BATCH], backend=self.backend)
                 y = minitorch.tensor(y_shuf[i : i + BATCH], backend=self.backend)
-                # Forward
 
+                # Forward pass
                 out = self.model.forward(X).view(y.shape[0])
                 prob = (out * y) + (out - 1.0) * (y - 1.0)
                 loss = -prob.log()
@@ -84,18 +92,46 @@ class FastTrain:
 
                 total_loss = loss.sum().view(1)[0]
 
-                # Update
+                # Update weights
                 optim.step()
 
             losses.append(total_loss)
-            # Logging
-            if epoch % 10 == 0 or epoch == max_epochs:
-                X = minitorch.tensor(data.X, backend=self.backend)
-                y = minitorch.tensor(data.y, backend=self.backend)
-                out = self.model.forward(X).view(y.shape[0])
-                y2 = minitorch.tensor(data.y)
-                correct = int(((out.detach() > 0.5) == y2).sum()[0])
+
+            # Logging and metrics calculation
+            X = minitorch.tensor(data.X, backend=self.backend)
+            y = minitorch.tensor(data.y, backend=self.backend)
+            out = self.model.forward(X).view(y.shape[0])
+            y2 = minitorch.tensor(data.y)
+            correct = int(((out.detach() > 0.5) == y2).sum()[0])
+
+            epoch_time = time.time() - start_time  # Calculate epoch time
+            all_epoch_times.append(epoch_time)  # Store epoch time
+
+            # Track times for groups of 10 epochs
+            if len(epoch_group_times) < 10:
+                epoch_group_times.append(epoch_time)
+
+            # Print every 10 epochs
+            if (epoch + 1) % 10 == 0 or epoch == max_epochs:
+                avg_time = sum(epoch_group_times) / len(epoch_group_times)
+                print(f"Epochs {epoch - 9}-{epoch}: Average time per epoch: {avg_time:.3f}s")
+                epoch_group_times = []  # Reset group times
                 log_fn(epoch, total_loss, correct, losses)
+
+            # Early stopping logic
+            if correct == len(data.y):
+                correct_counts += 1
+                log_fn(epoch, total_loss, correct, losses)
+                if correct_counts >= 2:
+                    log_fn(epoch, total_loss, correct, losses)
+                    print(f"Early stopping triggered at epoch {epoch} (all predictions correct twice).")
+                    break
+            else:
+                correct_counts = 0  # Reset if not all predictions are correct
+
+        # Print total average epoch time
+        total_avg_time = sum(all_epoch_times) / len(all_epoch_times)
+        print(f"Total average epoch time: {total_avg_time:.3f}s")
 
 
 if __name__ == "__main__":
@@ -116,7 +152,7 @@ if __name__ == "__main__":
     if args.DATASET == "xor":
         data = minitorch.datasets["Xor"](PTS)
     elif args.DATASET == "simple":
-        data = minitorch.datasets["Simple"].simple(PTS)
+        data = minitorch.datasets["Simple"](PTS)
     elif args.DATASET == "split":
         data = minitorch.datasets["Split"](PTS)
 
